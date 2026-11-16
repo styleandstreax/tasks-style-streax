@@ -41,6 +41,7 @@ measurementId:"G-W4B8RQHSE2"
 
 const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
+  const db=getFirestore(app);
 
 window.login=async()=>{
 try{
