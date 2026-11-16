@@ -43,14 +43,34 @@ const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
   const db=getFirestore(app);
 
+
 window.login=async()=>{
 try{
-await signInWithEmailAndPassword(auth,email.value,password.value);
-message.innerText="Login successful!";
+const userCredential=await signInWithEmailAndPassword(auth,email.value,password.value);
+const user=userCredential.user;
+
+const q=query(collection(db,"tasks"),where("assignedTo","==",user.uid));
+const snapshot=await getDocs(q);
+
+message.innerHTML="<h3>My Tasks</h3>";
+
+if(snapshot.empty){
+message.innerHTML+="<p>No tasks assigned.</p>";
+}
+
+snapshot.forEach(doc=>{
+const task=doc.data();
+message.innerHTML+=`
+<div class="card">
+<h3>${task.title||"Untitled Task"}</h3>
+<p>Status: ${task.status||"pending"}</p>
+</div>`;
+});
 }catch(e){
-message.innerText=e.message;
+message.innerText="Error: "+e.message;
 }
 };
+
 </script>
 </body>
 </html>
