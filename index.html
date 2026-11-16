@@ -42,7 +42,25 @@ measurementId:"G-W4B8RQHSE2"
 const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
   const db=getFirestore(app);
+window.showApprovals=async()=>{
+try{
+const q=query(collection(db,"tasks"),where("status","==","pending_approval"));
+const snapshot=await getDocs(q);
 
+message.innerHTML="<h3>Tasks Awaiting Approval</h3>";
+
+snapshot.forEach(docSnap=>{
+const task=docSnap.data();
+message.innerHTML+=`
+<div class="card">
+<h3>${task.title}</h3>
+<button onclick="approveTask('${docSnap.id}')">Approve</button>
+</div>`;
+});
+}catch(e){
+message.innerText=e.message;
+}
+};
 window.completeTask=async(taskId)=>{
 try{
 await updateDoc(doc(db,"tasks",taskId),{
@@ -62,7 +80,7 @@ const user=userCredential.user;
 const q=query(collection(db,"tasks"),where("assignedTo","==",user.uid));
 const snapshot=await getDocs(q);
 
-message.innerHTML="<h3>My Tasks</h3>";
+message.innerHTML="<h3>My Tasks</h3><button onclick='showApprovals()'>Manager Approvals</button>";
 
 if(snapshot.empty){
 message.innerHTML+="<p>No tasks assigned.</p>";
