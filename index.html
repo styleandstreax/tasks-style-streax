@@ -1,0 +1,55 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tasks by Style and Streax</title>
+<style>
+body{margin:0;font-family:Arial;background:#111;color:#fff}
+header{background:#1d1d1d;padding:20px;font-size:22px;font-weight:bold}
+main{padding:20px}
+input,button{width:100%;padding:14px;margin:8px 0;box-sizing:border-box;border-radius:8px;border:0}
+button{background:#c6a76a;color:#111;font-weight:bold}
+.card{background:#222;padding:16px;border-radius:12px;margin:12px 0}
+</style>
+</head>
+<body>
+<header>Tasks by Style and Streax</header>
+<main>
+<h3>Staff Task Manager</h3>
+<div class="card">
+<input id="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
+<button onclick="login()">LOGIN</button>
+</div>
+<div id="message"></div>
+</main>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+
+const firebaseConfig = {
+apiKey:"AIzaSyAJWN-JEGv-K9jaJ494XUpsDgWtx6sziLg",
+authDomain:"staff-task-manager-ss.firebaseapp.com",
+projectId:"staff-task-manager-ss",
+storageBucket:"staff-task-manager-ss.firebasestorage.app",
+messagingSenderId:"115839865662",
+appId:"1:115839865662:web:3e1c43bef8268dd102d26f",
+measurementId:"G-W4B8RQHSE2"
+};
+
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+
+window.login=async()=>{
+try{
+await signInWithEmailAndPassword(auth,email.value,password.value);
+message.innerText="Login successful!";
+}catch(e){
+message.innerText=e.message;
+}
+};
+</script>
+</body>
+</html>
