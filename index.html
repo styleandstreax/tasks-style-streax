@@ -85,12 +85,12 @@ const result=await signInWithEmailAndPassword(auth,$("email").value,$("password"
 currentUser=result.user;
 
 const profile=await getDoc(doc(db,"users",currentUser.uid));
-currentRole=currentUser.uid===ADMIN_UID?"admin":(profile.exists()?profile.data().role:"staff");
+currentRole=profile.exists()?profile.data().role:"staff";
+if(currentUser.uid===ADMIN_UID) currentRole="admin";
 
 $("loginBox").classList.add("hidden");
 $("dashboard").classList.remove("hidden");
-$("welcome").innerText="Welcome "+(profile.exists()?profile.data().name:"User")+" ("+currentRole+")";
-$("message").innerText="";
+$("welcome").innerText="Welcome "+(profile.exists()?profile.data().name:"User")+" ("+currentRole+")";$("message").innerText="";
 
 if(currentRole==="admin"||currentRole==="manager"){
 $("createBox").classList.remove("hidden");
