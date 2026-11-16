@@ -324,7 +324,36 @@ main.innerHTML=head('Approvals','Review completed work submitted by your team.')
 +`<section class="card"><div class="cardhead"><h3>Pending approval</h3></div>${taskRows(canManage()?pending:pending.filter(t=>t.assignedBy===currentUser.uid))}</section>`;
 }
 
+
 else if(page==='staff'){
+main.innerHTML=head('Staff Management','Manage your salon team.')
++`<section class="card">
+<div class="cardhead"><h3>Add staff member</h3></div>
+<form id="staffForm" class="formgrid">
+<div class="field"><label>Full name</label><input name="name" required></div>
+<div class="field"><label>Email</label><input name="email" type="email" required></div>
+<div class="field"><label>Role</label>
+<select name="role">
+<option value="staff">Staff</option>
+<option value="manager">Manager</option>
+<option value="admin">Admin</option>
+</select></div>
+<div class="field"><label>Department</label>
+<select name="department">
+<option>Hair</option><option>Makeup</option>
+<option>Skin</option><option>Nails</option>
+<option>Reception</option><option>Management</option>
+</select></div>
+<div class="field full"><button class="btn">Save staff profile</button></div>
+</form></section>
+<section class="card">
+<div class="cardhead"><h3>Team members</h3></div>
+<div id="staffList">Loading staff...</div>
+</section>`;
+loadStaff();
+$('staffForm').onsubmit=saveStaff;
+}
+
 main.innerHTML=head('Staff','Team directory and roles.')
 +`<section class="card"><h3>Team members</h3><div class="message">Staff directory requires secure admin permissions. User profiles are managed in Firebase Authentication and Firestore users.</div></section>`;
 }
@@ -414,6 +443,49 @@ createdBy:currentUser.uid,createdAt:serverTimestamp()
 e.target.reset();
 loadGeneric(page);
 alert('Saved');
+}catch(err){alert(err.message)}
+}
+
+async function loadStaff(){
+try{
+const snap=await getDocs(collection(db,'users'));
+$('staffList').innerHTML=snap.empty?
+'<div class="empty">No staff profiles found.</div>':
+`<div class="tablewrap"><table>
+<thead><tr><th>Name</th><th>Role</th><th>Department</th></tr></thead>
+<tbody>${snap.docs.map(d=>{
+const x=d.data();
+return `<tr>
+<td>${esc(x.name||'Unnamed')}<br>${esc(x.email||'')}</td>
+<td>${esc(x.role||'staff')}</td>
+<td>${esc(x.department||'—')}</td>
+</tr>`;
+}).join('')}</tbody></table></div>`;
+}catch(e){
+$('staffList').innerHTML='<div class="message">Unable to load staff.</div>';
+}
+}
+
+async function saveStaff(e){
+e.preventDefault();
+const f=new FormData(e.target);
+const email=f.get('email').trim();
+try{
+const snap=await getDocs(query(collection(db,'users'),where('email','==',email)));
+if(snap.empty){
+alert('Create this employee in Firebase Authentication first.');
+return;
+}
+const staffDoc=snap.docs[0];
+await updateDoc(doc(db,'users',staffDoc.id),{
+name:f.get('name'),
+email:email,
+role:f.get('role'),
+department:f.get('department')
+});
+e.target.reset();
+loadStaff();
+alert('Staff profile updated');
 }catch(err){alert(err.message)}
 }
 
