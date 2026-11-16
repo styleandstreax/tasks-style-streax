@@ -4,51 +4,219 @@
 <head>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Tasks by Style and Streax</title>
+
 <style>
-body{margin:0;font-family:Arial;background:#111;color:white}
-header{background:#202020;padding:20px;font-size:22px;font-weight:bold}
-main{padding:20px}
-input,select,textarea,button{width:100%;padding:14px;margin:8px 0;box-sizing:border-box;border-radius:8px;border:0}
-button{background:#c6a76a;color:#111;font-weight:bold;cursor:pointer}
-.card{background:#222;padding:16px;border-radius:12px;margin:12px 0}
-.small{color:#aaa;font-size:13px}
-.hidden{display:none}
+:root{
+--bg:#f6f5f1;
+--white:#fff;
+--gold:#b99a5c;
+--gold-light:#f3ead8;
+--text:#252525;
+--muted:#777;
+--border:#e9e6df;
+--green:#39785a;
+--red:#b45b52;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--text)}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+header{
+background:white;border-bottom:1px solid var(--border);
+padding:18px 24px;display:flex;justify-content:space-between;
+align-items:center;position:sticky;top:0;z-index:5
+}
+.brand{font-size:20px;font-weight:bold}
+.brand span{color:var(--gold)}
+#userLabel{font-size:13px;color:var(--muted)}
+.layout{display:flex;min-height:calc(100vh - 65px)}
+nav{
+width:230px;background:white;border-right:1px solid var(--border);
+padding:20px 12px;flex-shrink:0
+}
+nav button{
+width:100%;border:0;background:transparent;text-align:left;
+padding:13px;border-radius:9px;color:#555;margin:3px 0
+}
+nav button.active,nav button:hover{background:var(--gold-light);color:#765c2b}
+main{padding:28px;width:100%;max-width:1500px;margin:auto}
+h1{font-size:25px;margin:0 0 8px}
+.subtitle{color:var(--muted);margin-bottom:25px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.card{
+background:white;border:1px solid var(--border);
+border-radius:14px;padding:20px;margin-bottom:16px
+}
+.stat{font-size:28px;font-weight:bold;margin:12px 0}
+.muted{color:var(--muted);font-size:13px}
+.gold{color:var(--gold)}
+input,textarea,select{
+width:100%;padding:13px;border:1px solid var(--border);
+border-radius:9px;background:white;margin:7px 0 14px
+}
+textarea{min-height:90px;resize:vertical}
+label{font-size:13px;font-weight:bold}
+.btn{
+background:var(--gold);color:white;border:0;border-radius:9px;
+padding:13px 18px;font-weight:bold
+}
+.btn.secondary{background:#f0eee8;color:#555}
+.btn.danger{background:#f9e9e7;color:var(--red)}
+.btn.full{width:100%}
+.row{display:flex;gap:12px;align-items:center}
+.row>*{flex:1}
+.task{border:1px solid var(--border);padding:16px;border-radius:12px;margin:12px 0}
+.status{display:inline-block;padding:6px 10px;border-radius:20px;font-size:12px;background:#f3ead8;color:#765c2b}
+.screen{display:none}
+.screen.active{display:block}
+table{width:100%;border-collapse:collapse}
+td,th{text-align:left;padding:13px;border-bottom:1px solid var(--border)}
+th{color:var(--muted);font-size:13px}
+#loginBox{max-width:420px;margin:80px auto}
+#loginBox .card{padding:28px}
+.mobileNav{display:none}
+.empty{padding:25px;text-align:center;color:var(--muted)}
+@media(max-width:850px){
+.layout{display:block}
+nav{display:none}
+main{padding:18px}
+.grid{grid-template-columns:repeat(2,1fr);gap:10px}
+.card{padding:15px}
+header{padding:15px}
+.mobileNav{
+display:flex;position:fixed;bottom:0;left:0;right:0;
+background:white;border-top:1px solid var(--border);
+justify-content:space-around;padding:8px 2px;z-index:10
+}
+.mobileNav button{border:0;background:none;color:#777;font-size:11px;padding:8px 3px}
+.mobileNav button.active{color:var(--gold)}
+main{padding-bottom:90px}
+.row{display:block}
+}
 </style>
 </head>
+
 <body>
 
-<header>Tasks by Style and Streax</header>
-<main>
-<h3>Staff Task Manager</h3>
+<header>
+<div class="brand">Tasks <span>by</span> Style and Streax</div>
+<div id="userLabel">Not logged in</div>
+</header>
 
-<div class="card" id="loginBox">
-<input id="email" placeholder="Email">
+<div id="loginBox">
+<div class="card">
+<h2>Welcome back</h2>
+<p class="muted">Sign in to your workspace</p>
+<input id="email" type="email" placeholder="Email">
 <input id="password" type="password" placeholder="Password">
-<button onclick="login()">LOGIN</button>
-</div>
-
-<div id="dashboard" class="hidden">
-<p id="welcome"></p>
-<button onclick="logout()">LOGOUT</button>
-
-<div id="createBox" class="hidden card">
-<h3>Create Task</h3>
-<input id="taskTitle" placeholder="Task title">
-<textarea id="taskDescription" placeholder="Task description"></textarea>
-<select id="assignUser"><option value="">Select staff/manager</option></select>
-<button onclick="createTask()">ASSIGN TASK</button>
-</div>
-
-<div id="myTasks"></div>
-
-<div id="approvalBox" class="hidden">
-<button onclick="showApprovals()">MANAGER APPROVALS</button>
-<div id="approvalTasks"></div>
+<button class="btn full" onclick="login()">SIGN IN</button>
+<div id="message" class="muted"></div>
 </div>
 </div>
 
-<div id="message"></div>
+<div id="app" class="layout" style="display:none">
+<nav id="sideNav">
+<button class="active" onclick="go('dashboard',this)">▦ Dashboard</button>
+<button onclick="go('tasks',this)">☑ My Tasks</button>
+<button class="manager" onclick="go('create',this)">＋ Create Task</button>
+<button class="manager" onclick="go('approvals',this)">✓ Approvals</button>
+<button onclick="go('appointments',this)">◷ Appointments</button>
+<button onclick="go('services',this)">✦ Service Checklist</button>
+<button onclick="go('inventory',this)">▤ Inventory</button>
+<button class="manager" onclick="go('staff',this)">♙ Staff</button>
+<button class="manager" onclick="go('reports',this)">▥ Reports</button>
+<button onclick="go('notifications',this)">♧ Notifications</button>
+<button onclick="logout()">↪ Logout</button>
+</nav>
+
+<main>
+
+<section id="dashboard" class="screen active">
+<h1>Dashboard</h1>
+<div class="subtitle">Your workspace overview</div>
+<div class="grid">
+<div class="card"><div class="muted">My Tasks</div><div class="stat" id="statTasks">0</div></div>
+<div class="card"><div class="muted">Pending Approval</div><div class="stat" id="statPending">0</div></div>
+<div class="card"><div class="muted">Completed</div><div class="stat" id="statCompleted">0</div></div>
+<div class="card"><div class="muted">Today's Appointments</div><div class="stat">—</div></div>
+</div>
+<div class="card"><h3>Recent Tasks</h3><div id="recentTasks"></div></div>
+</section>
+
+<section id="tasks" class="screen">
+<h1>My Tasks</h1><div class="subtitle">Tasks assigned to you</div>
+<div class="card"><div id="myTasks"></div></div>
+</section>
+
+<section id="create" class="screen">
+<h1>Create Task</h1><div class="subtitle">Assign work to your team</div>
+<div class="card">
+<label>Task Title</label><input id="taskTitle" placeholder="Enter task title">
+<label>Description</label><textarea id="taskDescription" placeholder="Task details"></textarea>
+<label>Assign To</label><select id="assignUser"><option value="">Select employee</option></select>
+<label>Priority</label><select id="taskPriority"><option>Normal</option><option>High</option><option>Urgent</option></select>
+<label>Deadline</label><input id="taskDeadline" type="datetime-local">
+<button class="btn full" onclick="createTask()">ASSIGN TASK</button>
+</div>
+</section>
+
+<section id="approvals" class="screen">
+<h1>Approvals</h1><div class="subtitle">Review submitted tasks</div>
+<div class="card"><div id="approvalTasks"></div></div>
+</section>
+
+<section id="appointments" class="screen">
+<h1>Appointments</h1><div class="subtitle">Salon appointment management</div>
+<div class="card"><h3>Appointments</h3><p class="muted">Appointment management interface</p>
+<button class="btn" onclick="alert('Appointment feature will be connected next')">＋ Add Appointment</button></div>
+</section>
+
+<section id="services" class="screen">
+<h1>Service Checklist</h1><div class="subtitle">Salon service procedures</div>
+<div class="card">
+<label>Service</label><select><option>Hair Color</option><option>Keratin</option><option>Facial</option><option>Bridal Makeup</option><option>Haircut</option></select>
+<label>Checklist</label>
+<p><input type="checkbox" style="width:auto"> Consultation completed</p>
+<p><input type="checkbox" style="width:auto"> Service preparation</p>
+<p><input type="checkbox" style="width:auto"> Service completed</p>
+<p><input type="checkbox" style="width:auto"> Client aftercare explained</p>
+</div>
+</section>
+
+<section id="inventory" class="screen">
+<h1>Inventory</h1><div class="subtitle">Products and stock management</div>
+<div class="card"><h3>Inventory overview</h3><p class="muted">Inventory management interface</p>
+<button class="btn" onclick="alert('Inventory feature will be connected next')">＋ Add Product</button></div>
+</section>
+
+<section id="staff" class="screen">
+<h1>Staff</h1><div class="subtitle">Team members and roles</div>
+<div class="card"><div id="staffList"></div></div>
+</section>
+
+<section id="reports" class="screen">
+<h1>Reports</h1><div class="subtitle">Performance overview</div>
+<div class="grid">
+<div class="card">Tasks completed<div class="stat" id="reportCompleted">0</div></div>
+<div class="card">Pending tasks<div class="stat" id="reportPending">0</div></div>
+</div>
+</section>
+
+<section id="notifications" class="screen">
+<h1>Notifications</h1><div class="subtitle">Updates and reminders</div>
+<div class="card"><div class="empty">No new notifications</div></div>
+</section>
+
 </main>
+</div>
+
+<div class="mobileNav" id="mobileNav" style="display:none">
+<button onclick="go('dashboard',this)">▦<br>Home</button>
+<button onclick="go('tasks',this)">☑<br>Tasks</button>
+<button class="manager" onclick="go('create',this)">＋<br>Create</button>
+<button class="manager" onclick="go('approvals',this)">✓<br>Approve</button>
+<button onclick="go('notifications',this)">♧<br>Alerts</button>
+</div>
 
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
@@ -71,137 +239,119 @@ measurementId:"G-W4B8RQHSE2"
 const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
 const db=getFirestore(app);
-
 const ADMIN_UID="YWv2dR9lOWQa8Dnp3YBAd1rw7oD3";
-
-let currentUser=null;
-let currentRole="staff";
+let currentUser=null,currentRole="staff",allTasks=[];
 
 const $=id=>document.getElementById(id);
+
+window.go=(screen,btn)=>{
+document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+$(screen).classList.add("active");
+document.querySelectorAll("nav button,.mobileNav button").forEach(b=>b.classList.remove("active"));
+if(btn)btn.classList.add("active");
+};
 
 window.login=async()=>{
 try{
 const result=await signInWithEmailAndPassword(auth,$("email").value,$("password").value);
 currentUser=result.user;
-
 const profile=await getDoc(doc(db,"users",currentUser.uid));
-currentRole=profile.exists()?profile.data().role:"staff";
-if(currentUser.uid===ADMIN_UID) currentRole="admin";
-
-$("loginBox").classList.add("hidden");
-$("dashboard").classList.remove("hidden");
-$("welcome").innerText="Welcome "+(profile.exists()?profile.data().name:"User")+" ("+currentRole+")";$("message").innerText="";
-
-if(currentRole==="admin"||currentRole==="manager"){
-$("createBox").classList.remove("hidden");
-$("approvalBox").classList.remove("hidden");
+currentRole=currentUser.uid===ADMIN_UID?"admin":(profile.exists()?profile.data().role:"staff");
+$("loginBox").style.display="none";
+$("app").style.display="flex";
+$("mobileNav").style.display="flex";
+$("userLabel").innerText=(profile.exists()?profile.data().name:"User")+" • "+currentRole;
+document.querySelectorAll(".manager").forEach(b=>b.style.display=(currentRole==="admin"||currentRole==="manager")?"":"none");
 await loadUsers();
-}
-
 await loadTasks();
 }catch(e){$("message").innerText=e.message;}
 };
 
-window.logout=async()=>{
-await signOut(auth);
-location.reload();
-};
+window.logout=async()=>{await signOut(auth);location.reload();};
 
 async function loadUsers(){
-const snapshot=await getDocs(collection(db,"users"));
-$("assignUser").innerHTML='<option value="">Select staff/manager</option>';
-
-snapshot.forEach(d=>{
-if(d.id===currentUser.uid)return;
+const snap=await getDocs(collection(db,"users"));
+$("assignUser").innerHTML='<option value="">Select employee</option>';
+$("staffList").innerHTML="";
+snap.forEach(d=>{
 const u=d.data();
 const option=document.createElement("option");
 option.value=d.id;
 option.textContent=(u.name||"User")+" ("+(u.role||"staff")+")";
 $("assignUser").appendChild(option);
+$("staffList").innerHTML+=`<div class="task"><b>${u.name||"User"}</b><p class="muted">${u.role||"staff"}</p></div>`;
 });
+}
+
+async function loadTasks(){
+const q=query(collection(db,"tasks"),where("assignedTo","==",currentUser.uid));
+const snap=await getDocs(q);
+allTasks=[];
+snap.forEach(d=>allTasks.push({id:d.id,...d.data()}));
+renderTasks();
+}
+
+function renderTasks(){
+$("myTasks").innerHTML="";
+$("recentTasks").innerHTML="";
+let pending=0,completed=0;
+allTasks.forEach(t=>{
+if(t.status==="pending_approval")pending++;
+if(t.status==="approved")completed++;
+const card=document.createElement("div");
+card.className="task";
+card.innerHTML=`<b>${t.title||"Untitled Task"}</b><p>${t.description||""}</p><span class="status">${t.status}</span>`;
+if(t.status==="assigned"){
+const b=document.createElement("button");b.className="btn";b.textContent="Mark Complete";
+b.onclick=()=>completeTask(t.id);card.appendChild(b);
+}
+$("myTasks").appendChild(card);
+$("recentTasks").appendChild(card.cloneNode(true));
+});
+$("statTasks").innerText=allTasks.length;
+$("statPending").innerText=pending;
+$("statCompleted").innerText=completed;
+$("reportCompleted").innerText=completed;
+$("reportPending").innerText=pending;
+if(!allTasks.length)$("myTasks").innerHTML='<div class="empty">No tasks assigned</div>';
 }
 
 window.createTask=async()=>{
 try{
-const title=$("taskTitle").value.trim();
-const assignedTo=$("assignUser").value;
-if(!title||!assignedTo){alert("Enter title and select assignee");return;}
-
+const title=$("taskTitle").value.trim(),assignedTo=$("assignUser").value;
+if(!title||!assignedTo){alert("Enter task title and select employee");return;}
 await addDoc(collection(db,"tasks"),{
-title,
-description:$("taskDescription").value,
-assignedTo,
-assignedBy:currentUser.uid,
-status:"assigned",
-createdAt:new Date().toISOString()
+title,description:$("taskDescription").value,
+assignedTo,assignedBy:currentUser.uid,
+priority:$("taskPriority").value,
+deadline:$("taskDeadline").value,
+status:"assigned",createdAt:new Date().toISOString()
 });
-
-alert("Task assigned");
-$("taskTitle").value="";
-$("taskDescription").value="";
+alert("Task assigned successfully");
+$("taskTitle").value="";$("taskDescription").value="";
 await loadTasks();
 }catch(e){alert(e.message);}
 };
 
-async function loadTasks(){
-const q=query(collection(db,"tasks"),where("assignedTo","==",currentUser.uid));
-const snapshot=await getDocs(q);
-$("myTasks").innerHTML="<h3>My Tasks</h3>";
-
-snapshot.forEach(d=>{
-const t=d.data();
-const card=document.createElement("div");
-card.className="card";
-card.innerHTML=`
-<h3>${t.title||"Untitled"}</h3>
-<p>${t.description||""}</p>
-<p>Status: ${t.status}</p>
-`;
-if(t.status==="assigned"){
-const b=document.createElement("button");
-b.textContent="MARK COMPLETE";
-b.onclick=()=>completeTask(d.id);
-card.appendChild(b);
-}
-$("myTasks").appendChild(card);
-});
-}
-
-window.completeTask=async(id)=>{
-try{
-await updateDoc(doc(db,"tasks",id),{status:"pending_approval"});
-alert("Submitted for approval");
-await loadTasks();
-}catch(e){alert(e.message);}
+window.completeTask=async id=>{
+try{await updateDoc(doc(db,"tasks",id),{status:"pending_approval"});alert("Submitted for approval");await loadTasks();}
+catch(e){alert(e.message);}
 };
 
 window.showApprovals=async()=>{
-try{
-const q=query(collection(db,"tasks"),where("status","==","pending_approval"));
-const snapshot=await getDocs(q);
-$("approvalTasks").innerHTML="<h3>Awaiting Approval</h3>";
-
-snapshot.forEach(d=>{
-const t=d.data();
-const card=document.createElement("div");
-card.className="card";
-card.innerHTML=`<h3>${t.title}</h3><p>${t.description||""}</p>`;
-const b=document.createElement("button");
-b.textContent="APPROVE";
-b.onclick=()=>approveTask(d.id);
-card.appendChild(b);
-$("approvalTasks").appendChild(card);
+const snap=await getDocs(query(collection(db,"tasks"),where("status","==","pending_approval")));
+$("approvalTasks").innerHTML="";
+snap.forEach(d=>{
+const t=d.data(),card=document.createElement("div");
+card.className="task";
+card.innerHTML=`<b>${t.title}</b><p>${t.description||""}</p>`;
+const b=document.createElement("button");b.className="btn";b.textContent="Approve";
+b.onclick=async()=>{await updateDoc(doc(db,"tasks",d.id),{status:"approved"});showApprovals();};
+card.appendChild(b);$("approvalTasks").appendChild(card);
 });
-}catch(e){$("approvalTasks").innerText=e.message;}
+if(!$("approvalTasks").children.length)$("approvalTasks").innerHTML='<div class="empty">No tasks awaiting approval</div>';
 };
-
-window.approveTask=async(id)=>{
-try{
-await updateDoc(doc(db,"tasks",id),{status:"approved"});
-alert("Task approved");
-await showApprovals();
-}catch(e){alert(e.message);}
-};
+$("approvals").addEventListener("click",showApprovals);
 </script>
 </body>
 </html>
