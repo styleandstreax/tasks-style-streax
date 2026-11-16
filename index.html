@@ -28,7 +28,7 @@ button{background:#c6a76a;color:#111;font-weight:bold}
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 const firebaseConfig = {
 apiKey:"AIzaSyAJWN-JEGv-K9jaJ494XUpsDgWtx6sziLg",
 authDomain:"staff-task-manager-ss.firebaseapp.com",
